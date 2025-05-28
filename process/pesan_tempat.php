@@ -12,6 +12,7 @@ if(isset($_POST["submit"])){
     $sql = "INSERT INTO pemesanan (id_user, id_tempat, tanggal) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iis", $id_user, $id_tempat, $tanggal);
+    
 
     if ($stmt->execute()) {
         $_SESSION['pesan_sukses'] = "Pemesanan berhasil dilakukan.";
@@ -22,7 +23,9 @@ if(isset($_POST["submit"])){
     }
 
     $stmt->close();
-    $conn->clone();
+    $conn->close();
 
 }
+
+
 ?>
