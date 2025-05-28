@@ -11,9 +11,11 @@ $query = " SELECT p.id, u.nama AS nama_pemesan, t.nama_tempat, p.tanggal, p.stat
     FROM pemesanan p
     JOIN users u ON p.id_user = u.id_user
     JOIN tempat t ON p.id_tempat = t.id_tempat
-    WHERE p.status != 'selesai'";
+    WHERE p.status = 'diproses'";
     
 $result = mysqli_query($conn, $query);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +74,11 @@ $result = mysqli_query($conn, $query);
                                 <th class="px-6 py-4 font-semibold">Tanggal</th>
                                 <th class="px-6 py-4 font-semibold">Status</th>
                                 <th class="px-6 py-4 font-semibold">Aksi</th>
+                                <th> <button type="submit" name="cetak" 
+                                            class="bg-secondary hover:bg-primary text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+                                            <a href="../process/export_excel.php" class="btn btn-success" target="_blank">Export ke Excel</a>
+                                        </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,7 +109,7 @@ $result = mysqli_query($conn, $query);
                                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                             <button type="submit" name="submit" 
                                                 class="bg-secondary hover:bg-primary text-white font-medium py-2 px-4 rounded-lg transition duration-300">
-                                                Selesaikan
+                                                Terima
                                             </button>
                                         </form>
                                     </td>
@@ -121,6 +128,56 @@ $result = mysqli_query($conn, $query);
             </div>
         </main>
 
+       <!-- Add Form Container -->
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-cream mb-8">
+        <div class="p-6 bg-gradient-to-r from-primary to-secondary text-white">
+            <h2 class="text-xl font-semibold">Tambah Tempat Baru</h2>
+            <p class="text-sm opacity-80">Isi form berikut untuk menambahkan tempat baru</p>
+        </div>
+        
+        <form action="../process/tambah_tempat.php" method="post" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2 md:col-span-1">
+                <label for="nama_tempat" class="block text-sm font-medium text-gray-700">Masukan Nama tempat:</label>
+                <input type="text" name="nama_tempat" id="nama_tempat" placeholder="Nama tempat baru" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-light transition duration-200" />
+            </div>
+
+            <div class="space-y-2 md:col-span-1">
+                <label for="lokasi" class="block text-sm font-medium text-gray-700">Masukan lokasi tempat:</label>
+                <input type="text" name="lokasi" id="lokasi" placeholder="Lokasi tempat baru" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-light transition duration-200" />
+            </div>
+
+            <div class="space-y-2 md:col-span-2">
+                <label for="deskripsi" class="block text-sm font-medium text-gray-700">Masukan deskripsi tempat:</label>
+                <textarea name="deskripsi" id="deskripsi" placeholder="Deskripsi tempat baru" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-light h-32 resize-none transition duration-200"></textarea>
+            </div>
+
+            <div class="md:col-span-2 flex justify-end">
+                <button type="submit" name="submit"
+                    class="bg-secondary hover:bg-primary text-white font-medium py-3 px-6 rounded-lg transition duration-300 flex items-center gap-2 shadow-md hover:shadow-lg">
+                    <i class="fas fa-plus"></i>
+                    <span>Tambahkan Tempat</span>
+                </button>
+            </div>
+        </form>
     </div>
+</div>
+</div>
+
+
+
+<<?php if (isset($_SESSION['pesan_sukses'])): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Sukses',
+        text: '<?= $_SESSION['pesan_sukses']; ?>',
+    });
+</script>
+<?php unset($_SESSION['pesan_sukses']); endif; ?>
+
 </body>
 </html>

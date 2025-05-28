@@ -27,13 +27,19 @@ $diproses = $result_diproses->fetch_all(MYSQLI_ASSOC);
 $completedOrdersQuery = "SELECT p.id, p.tanggal, p.status, t.nama_tempat, t.lokasi 
                         FROM pemesanan p 
                         JOIN tempat t ON p.id_tempat = t.id_tempat 
-                        WHERE p.id_user = ? AND p.status = 'selesai'
+                        WHERE p.id_user = ? AND p.status = 'diterima'
                         ORDER BY p.tanggal DESC";
 $stmt_selesai = $conn->prepare($completedOrdersQuery);
 $stmt_selesai->bind_param("i", $user_id);
 $stmt_selesai->execute();
 $result_selesai = $stmt_selesai->get_result();
 $selesai = $result_selesai->fetch_all(MYSQLI_ASSOC);
+
+$updateStatusQuery = "UPDATE pemesanan SET status = 'selesai' 
+                      WHERE status = 'diterima' AND tanggal < CURDATE() AND id_user = ?";
+$stmt_update = $conn->prepare($updateStatusQuery);
+$stmt_update->bind_param("i", $user_id);
+$stmt_update->execute();
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +91,7 @@ $selesai = $result_selesai->fetch_all(MYSQLI_ASSOC);
 
                 <div>
                     <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">Tanggal pemesanan:</label>
-                    <input type="date" name="tanggal" id="tanggal" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-secondary focus:border-secondary" required>
+                    <input type="date" name="tanggal" id="tanggal" min="<?= date('Y-m-d'); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-secondary focus:border-secondary" required>
                 </div>
                 
                 <button type="submit" name="submit" class="px-6 py-2 bg-primary hover:bg-secondary text-white font-medium rounded-md transition duration-200">
